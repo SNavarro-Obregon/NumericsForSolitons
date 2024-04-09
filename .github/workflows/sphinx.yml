@@ -10,12 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install extensions
-      run:
-        python -m pip install myst-parser
     - name: Build HTML
       uses: ammaraskar/sphinx-action@master
       with:
-        docs-folder: "/"
+        run:
+          python -m pip install myst-parser
+        docs-folder: "."
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
