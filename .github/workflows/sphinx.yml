@@ -21,12 +21,6 @@ jobs:
       with:
         name: html-docs
         path: docs/
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/
     - name: Commit documentation changes
       run: |
         git clone https://github.com/chrishalcrow/NumericsForSolitons.git --branch gh-pages --single-branch gh-pages
