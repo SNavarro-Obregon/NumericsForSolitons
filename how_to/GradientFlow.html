@@ -135,7 +135,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -198,7 +198,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -206,17 +206,22 @@
         <article role="main">
           <section class="tex2jax_ignore mathjax_ignore" id="gradient-flow">
 <h1>Gradient Flow<a class="headerlink" href="#gradient-flow" title="Permalink to this heading"><span>#</span></a></h1>
-<p>Gradient flow is used to solve the following problem</p>
+<section id="theory">
+<h2>Theory<a class="headerlink" href="#theory" title="Permalink to this heading"><span>#</span></a></h2>
+<p><strong>Gradient flow</strong> is used to solve the following problem</p>
 <div class="math-wrapper"><div class="math notranslate nohighlight">
 \[\frac{\partial\phi}{\partial \tau} = -\frac{\delta E}{\delta \phi}\]</div></div>
 <p>Here <span class="math notranslate nohighlight">\(\phi(x, \tau)\)</span> is your field.</p>
-<p>The code to make this should look like</p>
+</section>
+<section id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading"><span>#</span></a></h2>
+<p>The code to make this <em>should</em> look like</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ddphi</span> <span class="o">=</span> <span class="n">get_second_derivative</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
     <span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">ddphi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>here <code class="docutils literal notranslate"><span class="pre">get_second_derivative</span></code> is a function. <code class="docutils literal notranslate"><span class="pre">dV</span></code> gives the derivative of your potential</p>
+<p>here <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(N)</span></code> is a <em>for loop</em>. <code class="docutils literal notranslate"><span class="pre">dV</span></code> gives the derivative of your potential</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" data-sync-id="tabcode-Python" for="sd-tab-item-0">
@@ -252,6 +257,11 @@ JULIA</label><div class="sd-tab-content docutils">
 </div>
 </div>
 </div>
+</section>
+<section id="read-more">
+<h2>Read more<a class="headerlink" href="#read-more" title="Permalink to this heading"><span>#</span></a></h2>
+<p>Gradient flow can also be used to generate collective coordinate space. Find out more in <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0951-7715/10/1/002">this paper</a> by Manton and Merabet.</p>
+</section>
 </section>
 
         </article>
@@ -293,8 +303,29 @@ JULIA</label><div class="sd-tab-content docutils">
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Gradient Flow</a><ul>
+<li><a class="reference internal" href="#theory">Theory</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+<li><a class="reference internal" href="#read-more">Read more</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
