@@ -6,7 +6,7 @@
 
 $$\frac{\partial\phi}{\partial \tau} = -\frac{\delta E}{\delta \phi}$$
 
-Here $\phi(x, \tau)$ is your field.
+Here $\phi(x, \tau)$ is your field!!!!!
 
 ## Implementation
 
