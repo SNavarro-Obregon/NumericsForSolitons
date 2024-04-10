@@ -6,7 +6,7 @@
 Numerics for Solitons
 =====================
 
-This is a website for leaning about soliton numerics.
+This is a website for leaning about soliton numerics!
 
 These are the sections:
 
