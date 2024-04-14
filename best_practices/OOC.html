@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Time evolution" href="TimeEvolution.html" /><link rel="prev" title="Derivatives" href="Derivatives.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
     <meta name="generator" content="sphinx-7.1.2, furo 2021.11.16"/>
-        <title>Gradient Flow - Numerics for Solitons</title>
+        <title>Object oriented coding - Numerics for Solitons</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=916d6ed8f59335acffa15474ff504849343d4c76" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -156,7 +156,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/index.html">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/Choosing.html">Choosing a language</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/C%2B%2B.html">C++</a></li>
@@ -164,11 +164,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/Julia.html">Julia</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">How to</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="Grid.html">Make a Grid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Derivatives.html">Derivatives</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Gradient Flow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="TimeEvolution.html">Time evolution</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../how_to/index.html">How to</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../how_to/Grid.html">Make a Grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_to/Derivatives.html">Derivatives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_to/GradientFlow.html">Gradient Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../how_to/TimeEvolution.html">Time evolution</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples/index.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -203,63 +203,121 @@
           </label>
         </div>
         <article role="main">
-          <section class="tex2jax_ignore mathjax_ignore" id="gradient-flow">
-<h1>Gradient Flow<a class="headerlink" href="#gradient-flow" title="Permalink to this heading"><span>#</span></a></h1>
-<section id="theory">
-<h2>Theory<a class="headerlink" href="#theory" title="Permalink to this heading"><span>#</span></a></h2>
-<p><strong>Gradient flow</strong> is used to solve the following problem</p>
-<div class="math-wrapper"><div class="math notranslate nohighlight">
-\[\frac{\partial\phi}{\partial \tau} = -\frac{\delta E}{\delta \phi}\]</div></div>
-<p>Here <span class="math notranslate nohighlight">\(\phi(x, \tau)\)</span> is your field!!!!!</p>
-</section>
-<section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading"><span>#</span></a></h2>
-<p>The code to make this <em>should</em> look like</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ddphi</span> <span class="o">=</span> <span class="n">get_second_derivative</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-    <span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">ddphi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+          <section class="tex2jax_ignore mathjax_ignore" id="object-oriented-coding">
+<h1>Object oriented coding<a class="headerlink" href="#object-oriented-coding" title="Permalink to this heading"><span>#</span></a></h1>
+<section id="why">
+<h2>Why?<a class="headerlink" href="#why" title="Permalink to this heading"><span>#</span></a></h2>
+<p>Suppose you have a kink and you’d like to calculate it’s energy. To caculate this, you need to have the kink field, the grid, maybe some parameters and knowledge of the boundary conditions. You could write a <code class="docutils literal notranslate"><span class="pre">calculate_energy</span></code> function. Because it needs all these things, you end up passing them all to the function. So to use it you need to write code that looks something like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">calculate_energy</span><span class="p">(</span><span class="n">my_kink</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">boundary_conditions</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>here <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(N)</span></code> is a <em>for loop</em>. <code class="docutils literal notranslate"><span class="pre">dV</span></code> gives the derivative of your potential</p>
+<p>This is ok, but can get out of hand quickly.</p>
+<p>Another option is to represent your kink as an <em>object</em> (as a class in c++, a struct in Julia). Think of this as a template of your field, which bundles all its vital information together. So you might make a class which represents a kink with this structure</p>
+<div class="highlight-title=“Pseudocode” notranslate"><div class="highlight"><pre><span></span>class Kink:
+	field
+	grid
+	parameters
+	boundary_conditions
+</pre></div>
+</div>
+<p>You would then make your kink <code class="docutils literal notranslate"><span class="pre">my_kink</span> <span class="pre">=</span> <span class="pre">Kink(…)</span></code>. Here <code class="docutils literal notranslate"><span class="pre">my_kink</span></code> is an object of class (or struct) type Kink. When you pass it to the energy function, you only need to write…</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">calculate_energy</span><span class="p">(</span><span class="n">my_kink</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>…since my_kink contains everything you need to know. There are more advantages than just making your code looks nicer. Classes and objects mean your field is closely tied together with the grid it’s on etc. So it should be harder to make mistakes.</p>
+<p>You can also define methods. These are functions which are special for your classes. Then you can do things like: <code class="docutils literal notranslate"><span class="pre">energy</span> <span class="pre">=</span> <span class="pre">my_kink.calculate_energy()</span></code>. Nice!</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading"><span>#</span></a></h2>
+<p>Let’s make the aforementioned kink. To be more specific, we’ll make a class with:</p>
+<ol class="arabic simple">
+<li><p>an array representing the field</p></li>
+<li><p>a float representing the lattice_spacing</p></li>
+<li><p>an integer representing the number of lattice points,</p></li>
+<li><p>a list of floats representing parameters</p></li>
+<li><p>a string representing the bounadry conditions
+This isn’t neccisarly a perfect structure; but it’s good to try out making a class!</p></li>
+</ol>
+<p>Here we go:</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
-<label class="sd-tab-label" data-sync-id="tabcode-Python" for="sd-tab-item-0">
-PYTHON</label><div class="sd-tab-content docutils">
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">phi</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">phi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-0">
+JULIA</label><div class="sd-tab-content docutils">
+<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="k">mutable</span><span class="w"> </span><span class="k">struct</span> <span class="kt">Kink</span>
+<span class="w">    </span><span class="n">field</span><span class="o">::</span><span class="kt">Array</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}</span>
+<span class="w">    </span><span class="n">ls</span><span class="o">::</span><span class="kt">Float64</span>
+<span class="w">    </span><span class="n">lp</span><span class="o">::</span><span class="kt">Int64</span>
+<span class="w">    </span><span class="n">pars</span><span class="o">::</span><span class="kt">Vector</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}</span>
+<span class="w">    </span><span class="n">boundary_conditions</span><span class="o">::</span><span class="kt">String</span>
+<span class="k">end</span>
 </pre></div>
 </div>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
-<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-1">
-JULIA</label><div class="sd-tab-content docutils">
-<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="o">*</span><span class="n">phi</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">phi</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
+<label class="sd-tab-label" data-sync-id="tabcode-other" for="sd-tab-item-1">
+OTHER</label><div class="sd-tab-content docutils">
+<div class="highlight-other notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>You could define this using automatic differentiation…</p>
+<p>Now how do we make a <code class="docutils literal notranslate"><span class="pre">Kink</span></code>? First, you need to make an constructor. This varies a bit by language. One important point is that you make some values needed for constructor and while some can be optional; and go to a default value. In this example we’ll require the user to give the lattice spacing and lattice points but not the field, which will default to zeros. We’ll also give pars the default value of an array with one zero and the boundary_conditions equal to “Dirichlet”:</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio"/>
-<label class="sd-tab-label" data-sync-id="tabcode-Python" for="sd-tab-item-2">
-PYTHON</label><div class="sd-tab-content docutils">
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span>
-    <span class="n">blah</span> <span class="n">blah</span>
+<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-2">
+JULIA</label><div class="sd-tab-content docutils">
+<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="n">Kink</span><span class="p">(</span><span class="n">lp</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">ls</span><span class="o">::</span><span class="kt">Float64</span><span class="p">;</span><span class="w"> </span><span class="n">pars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">boundary_conditions</span><span class="o">=</span><span class="sa">“Dirichlet</span><span class="s">" ) = Kink(zeros(lp), ls, lp, pars, boundary_conditions)</span>
 </pre></div>
 </div>
 </div>
 <input id="sd-tab-item-3" name="sd-tab-set-1" type="radio"/>
-<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-3">
-JULIA</label><div class="sd-tab-content docutils">
-<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">'</span><span class="n">m</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">sure</span>
+<label class="sd-tab-label" data-sync-id="tabcode-other" for="sd-tab-item-3">
+OTHER</label><div class="sd-tab-content docutils">
+<div class="highlight-other notranslate"><div class="highlight"><pre><span></span>???
 </pre></div>
 </div>
 </div>
 </div>
+<p>Then you can make <code class="docutils literal notranslate"><span class="pre">my_kink</span></code>, on a grid of 100 points with lattice spacing 0.2 as follows: (The other elements of the class will take their default values)</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-4">
+JULIA</label><div class="sd-tab-content docutils">
+<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="n">my_kink</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Kink</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-other" for="sd-tab-item-5">
+OTHER</label><div class="sd-tab-content docutils">
+<div class="highlight-other notranslate"><div class="highlight"><pre><span></span>???
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can do things like print the field values, or change the parameters as follows:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-6" name="sd-tab-set-3" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-6">
+JULIA</label><div class="sd-tab-content docutils">
+<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="n">print</span><span class="p">(</span><span class="n">my_kink</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+<span class="n">my_kink</span><span class="o">.</span><span class="n">pars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">2.0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-3" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-other" for="sd-tab-item-7">
+OTHER</label><div class="sd-tab-content docutils">
+<div class="highlight-other notranslate"><div class="highlight"><pre><span></span>???
+</pre></div>
+</div>
+</div>
+</div>
+<p>It might be a good idea to make a Grid class and a Parameters class. Then your Kink class will contain the field, a Grid and a Parameters.</p>
 </section>
-<section id="read-more">
-<h2>Read more<a class="headerlink" href="#read-more" title="Permalink to this heading"><span>#</span></a></h2>
-<p>Gradient flow can also be used to generate collective coordinate space. Find out more in <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0951-7715/10/1/002">this paper</a> by Manton and Merabet.</p>
+<section id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="Permalink to this heading"><span>#</span></a></h2>
+<p><a class="reference external" href="https://docs.julialang.org/en/v1/manual/constructors/">Constructors in Julia</a></p>
 </section>
 </section>
 
@@ -268,33 +326,15 @@ JULIA</label><div class="sd-tab-content docutils">
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="TimeEvolution.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Time evolution</div>
-              </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="Derivatives.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Derivatives</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
 
         <div class="related-information">
               Copyright &#169; 2024, the Soliton Community |
           Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
           <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
-            | <a class="muted-link" href="../_sources/how_to/GradientFlow.md.txt"
+            | <a class="muted-link" href="../_sources/best_practices/OOC.md.txt"
                rel="nofollow">
               Show Source
             </a>
@@ -314,10 +354,10 @@ JULIA</label><div class="sd-tab-content docutils">
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Gradient Flow</a><ul>
-<li><a class="reference internal" href="#theory">Theory</a></li>
-<li><a class="reference internal" href="#implementation">Implementation</a></li>
-<li><a class="reference internal" href="#read-more">Read more</a></li>
+<li><a class="reference internal" href="#">Object oriented coding</a><ul>
+<li><a class="reference internal" href="#why">Why?</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#resources">Resources</a></li>
 </ul>
 </li>
 </ul>
@@ -334,7 +374,5 @@ JULIA</label><div class="sd-tab-content docutils">
     <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="../_static/scripts/furo.js?v=818c8f69"></script>
     <script src="../_static/design-tabs.js?v=36754332"></script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
