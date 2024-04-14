@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Object oriented coding" href="OOC.html" /><link rel="prev" title="Modularisation" href="Modularisation.html" />
 
     <meta name="generator" content="sphinx-7.1.2, furo 2021.11.16"/>
-        <title>Locality 1: locality of written code - Numerics for Solitons</title>
+        <title>Locality, locality locality - Numerics for Solitons</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=916d6ed8f59335acffa15474ff504849343d4c76" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -159,8 +159,7 @@
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">Best Practices</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Modularisation.html">Modularisation</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Locality 1: locality of written code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#locality-of-calculation">Locality of calculation</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Locality, locality locality</a></li>
 <li class="toctree-l2"><a class="reference internal" href="OOC.html">Object oriented coding</a></li>
 </ul>
 </li>
@@ -210,11 +209,16 @@
           </label>
         </div>
         <article role="main">
-          <p>There are three “localities” that are important.</p>
-<section id="locality-1-locality-of-written-code">
-<h1>Locality 1: locality of written code<a class="headerlink" href="#locality-1-locality-of-written-code" title="Permalink to this heading"><span>#</span></a></h1>
-<p>Things that depend on each other should be near each other in your actual code.</p>
-<p>## Locality 2: locality of objects in memory</p>
+          <section class="tex2jax_ignore mathjax_ignore" id="locality-locality-locality">
+<h1>Locality, locality locality<a class="headerlink" href="#locality-locality-locality" title="Permalink to this heading"><span>#</span></a></h1>
+<p>There are three “localities” that are important.</p>
+<section id="locality-of-written-code">
+<h2>Locality of written code<a class="headerlink" href="#locality-of-written-code" title="Permalink to this heading"><span>#</span></a></h2>
+<p>Things that depend on each other should be near each other in your actual code.
+If you have a function A which heavily uses B, put B beneath A. Then it’s easy to find when you’re developing.</p>
+</section>
+<section id="locality-of-objects-in-memory">
+<h2>Locality of objects in memory<a class="headerlink" href="#locality-of-objects-in-memory" title="Permalink to this heading"><span>#</span></a></h2>
 <p>When doing a numerical calculation, you want everything you’re using to be close to each other in memory.
 The most extreme example of this is global parameters. Consider the following code</p>
 <div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="n">a_big_sum</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
@@ -253,11 +257,12 @@ everything else being used. <strong>Make sure you pass everything that it used i
 to the function</strong>.</p>
 </section>
 <section id="locality-of-calculation">
-<h1>Locality of calculation<a class="headerlink" href="#locality-of-calculation" title="Permalink to this heading"><span>#</span></a></h1>
+<h2>Locality of calculation<a class="headerlink" href="#locality-of-calculation" title="Permalink to this heading"><span>#</span></a></h2>
 <p>This is helpful for paralellisation. When you do a field theory calculation you want to keep the
 calculation <em>local</em>. So when you calculate the energy at point <code class="docutils literal notranslate"><span class="pre">i</span></code>, you want this to only depend
 on a few other points nearby: <code class="docutils literal notranslate"><span class="pre">i+1</span></code> and <code class="docutils literal notranslate"><span class="pre">i-1</span></code>, and maybe some more. If you do this, your code
 should be fast and it should be easy to paralellise. Find out more here.</p>
+</section>
 </section>
 
         </article>
@@ -311,8 +316,12 @@ should be fast and it should be easy to paralellise. Find out more here.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Locality 1: locality of written code</a></li>
+<li><a class="reference internal" href="#">Locality, locality locality</a><ul>
+<li><a class="reference internal" href="#locality-of-written-code">Locality of written code</a></li>
+<li><a class="reference internal" href="#locality-of-objects-in-memory">Locality of objects in memory</a></li>
 <li><a class="reference internal" href="#locality-of-calculation">Locality of calculation</a></li>
+</ul>
+</li>
 </ul>
 
           </div>
