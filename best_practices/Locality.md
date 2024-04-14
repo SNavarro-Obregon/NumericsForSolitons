@@ -1,10 +1,13 @@
+# Locality, locality locality 
+
 There are three "localities" that are important.
 
-## Locality 1: locality of written code
+## Locality of written code
 
 Things that depend on each other should be near each other in your actual code.
+If you have a function A which heavily uses B, put B beneath A. Then it's easy to find when you're developing.
 
-## Locality 2: locality of objects in memory
+## Locality of objects in memory
 
 When doing a numerical calculation, you want everything you're using to be close to each other in memory.
 The most extreme example of this is global parameters. Consider the following code
