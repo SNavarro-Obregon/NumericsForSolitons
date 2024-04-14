@@ -14,7 +14,7 @@ These are the sections:
    :maxdepth: 2
    :caption: Contents:
 
-   best_practices
+   best_practices/index
    getting_started/index
    how_to/index
    examples/index
