@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Time evolution" href="TimeEvolution.html" /><link rel="prev" title="Derivatives" href="Derivatives.html" />
 
     <meta name="generator" content="sphinx-7.1.2, furo 2021.11.16"/>
-        <title>Gradient Flow - Numerics for Solitons</title>
+        <title>Gradient-based Optimization methods for functionals - Numerics for Solitons</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=916d6ed8f59335acffa15474ff504849343d4c76" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
@@ -173,7 +173,8 @@
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">How to</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Grid.html">Make a Grid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Derivatives.html">Derivatives</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Gradient Flow</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Gradient-based Optimization methods for functionals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arrested-newton-flow">Arrested Newton Flow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="TimeEvolution.html">Time evolution</a></li>
 </ul>
 </li>
@@ -209,35 +210,115 @@
           </label>
         </div>
         <article role="main">
-          <section class="tex2jax_ignore mathjax_ignore" id="gradient-flow">
-<h1>Gradient Flow<a class="headerlink" href="#gradient-flow" title="Permalink to this heading"><span>#</span></a></h1>
-<section id="theory">
-<h2>Theory<a class="headerlink" href="#theory" title="Permalink to this heading"><span>#</span></a></h2>
-<p><strong>Gradient flow</strong> is used to solve the following problem</p>
+          <section class="tex2jax_ignore mathjax_ignore" id="gradient-based-optimization-methods-for-functionals">
+<h1>Gradient-based Optimization methods for functionals<a class="headerlink" href="#gradient-based-optimization-methods-for-functionals" title="Permalink to this heading"><span>#</span></a></h1>
+<section id="the-gradient-flow-relaxation-method">
+<h2>The gradient flow relaxation method<a class="headerlink" href="#the-gradient-flow-relaxation-method" title="Permalink to this heading"><span>#</span></a></h2>
+<p>Consider a general nonlinear (scalar) field theory with topologically non-trivial configurations. Static solutions are given by field configurations <span class="math notranslate nohighlight">\(\Phi_s=(\phi^1,\cdots,\phi^n)\)</span> that make the (static) energy functional</p>
 <div class="math-wrapper"><div class="math notranslate nohighlight">
-\[\frac{\partial\phi}{\partial \tau} = -\frac{\delta E}{\delta \phi}\]</div></div>
-<p>Here <span class="math notranslate nohighlight">\(\phi(x, \tau)\)</span> is your field!!!!!</p>
+\[
+E[\Phi]=\frac{1}{2} \int\left[h_{a b}(\Phi) \partial_i \phi^a(x) \partial^i \phi^b(x)+V\left(\Phi, \partial_i \Phi\right)\right] d^d x \equiv \int \varepsilon(\Phi) d^d x 
+\]</div></div>
+<p>stationary under first variations, i.e.</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[ \frac{\delta E[\Phi]}{\delta \phi^a}\bigg\rvert_{\Phi_s}=0. \]</div></div>
+<p>Starting from an arbitrary initial configuration <span class="math notranslate nohighlight">\(\Phi^{(i)}\)</span> which, in general, will <em>not</em> be a static solution of the system, we want to find a static solution within the same homotopy class as <span class="math notranslate nohighlight">\(\Phi^{(i)}\)</span>. The gradient flow method allows to do so by ``relaxing’’ the input field configuration to the true static solution. This is achieved by locally evolving the field in the direction of maximum (local) variation of the energy functional, i.e. the direction of the gradient of the energy density with respect to the field variables.
+Indeed, let <span class="math notranslate nohighlight">\(\Phi^{(i)}\)</span> be the input configuration. Since it will not be in general a static solution, the first variation of the static energy density in the direction of <span class="math notranslate nohighlight">\(\delta\Phi\)</span> will have the form</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \delta E [\Phi^{(i)};\delta\Phi]=\frac{d}{d\epsilon}E[\Phi+\epsilon \delta\Phi]\bigg\rvert_{\epsilon=0}=\int d^dx F_a[\Phi^{(i)}]\delta \phi^a+ \text{B. T.}\neq 0
+\]</div></div>
+<p>where B.T. stands for boundary terms, and</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    F_a[\Phi]=\frac{\delta E[\Phi]}{\delta \phi^a}=\frac{\partial\varepsilon}{\partial \phi^a}-\partial_ i\frac{\partial\varepsilon}{\partial\partial_ i\phi ^a}
+\]</div></div>
+<p>is the <em>functional derivative</em> of <span class="math notranslate nohighlight">\(E\)</span>. The expression above is the generalization of the concept of directional derivative to functionals, and hence the functional derivative is the generalization of the gradient to infinite dimensions.</p>
+<p>Considering that the variations are taken over field configurations with fixed boundary conditions, the boundary terms vanish identically after integration. The Gradient flow relaxation method may then be implemented iteratively by changing at each iteration the field configuration as:</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \phi_a^{(i+1)}=\phi_a^{(i)}-\gamma F_a[\Phi^{(i)}],
+\]</div></div>
+<p>where <span class="math notranslate nohighlight">\(\gamma\in\mathbb{R}_+\)</span> is the <strong>update parameter</strong>. The previous equation is the discrete analogue of the following flow equation in the limit <span class="math notranslate nohighlight">\(\gamma\rightarrow 0\)</span>:</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+ \frac{d}{d\gamma}\phi_a(x,\gamma)=-F_a[\Phi(x,\gamma)],\tag{1}
+\]</div></div>
+<p>where now <span class="math notranslate nohighlight">\(\gamma\)</span> plays the role of an ancillary time parameter. The evolution along  <span class="math notranslate nohighlight">\(\gamma\)</span> describes the relaxation of the initial configuration to a static solution, in the sense that</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    E[\Phi^{(i+1)}]\leq E[\Phi^{(i)}].
+\]</div></div>
+<p>Since the gradient flow <span class="math notranslate nohighlight">\((1)\)</span> describes a smooth transformation of the field, the final and initial field configurations will (in principle) lay in the same homotopy class of maps. Therefore, we may obtain solitonic solutions with different topological charge by using field configurations with different degree as input ansatz. Of course, for the numerical implementation it is necessary to discretize such transformation, into a discontinuous change on each iteration. One then must be careful with the values of the parameters that enter in the discretized version of the flow equation, so that these discrete steps do not involve a transition between homotopy classes.</p>
+<section id="example-1-dimensional-kink">
+<h3>Example: 1 dimensional kink<a class="headerlink" href="#example-1-dimensional-kink" title="Permalink to this heading"><span>#</span></a></h3>
+<p>Consider the <span class="math notranslate nohighlight">\(1+1\)</span> dimensional <span class="math notranslate nohighlight">\(\phi^4\)</span> model, a nonlinear model described by the Lagrangian</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \mathcal{L}=\frac 1 2 \partial_\mu\phi\partial^\mu\phi - U(\phi).
+\]</div></div>
+<p>where <span class="math notranslate nohighlight">\(U(\phi)=(\phi^2-1)^2\)</span> is a potential term. This potential has two vacua, namely, <span class="math notranslate nohighlight">\(\phi=\pm1\)</span>, so that the vacuum manifold is given by the <span class="math notranslate nohighlight">\(0-sphere\)</span>: <span class="math notranslate nohighlight">\(V=S^{0}=\\{-1,1\\}\)</span>.</p>
+<p>On the other hand, the static energy of this model is given by</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    E=\frac{1}{2}\int[ -(\partial_x\phi)^2+U(\phi)]dx \tag{3}
+\]</div></div>
+<p>so that static solutions will correspond to field configurations minimizing <span class="math notranslate nohighlight">\((3)\)</span> subject to some boundary conditions imposed at spatial infinity. In this case, these configurations define maps at spatial infinity</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[\begin{split}
+    \phi^\infty:\\{-\infty,\infty\\}\rightarrow \\{+1,-1\\}
+\end{split}\]</div></div>
+<p>depending on the chosen boundary conditions. Such maps are characterized by the fundamental homotopy group <span class="math notranslate nohighlight">\(\pi_0(S^0)\)</span>, which basically measures the number of path-connected components of <span class="math notranslate nohighlight">\(S^0\)</span>. Thus, there are four topologically different field configurations: two of them correspond to the topologically trivial vacua, the other ones, to topological solitons — the <em>kink</em>, which interpolates between the <span class="math notranslate nohighlight">\(+1\)</span> and <span class="math notranslate nohighlight">\(-1\)</span> vacua, and the <em>antikink</em>, which goes from <span class="math notranslate nohighlight">\(-1\)</span> to <span class="math notranslate nohighlight">\(+1\)</span>.</p>
+<p>In this simple case, the gradient flow equation looks like</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+\frac{d}{d\gamma}\phi(x,\gamma)=-\gamma F[\phi],\qquad F[\phi]=\frac{\partial^2\phi}{\partial x^2}+\frac{\partial U}{\partial\phi}
+\]</div></div>
 </section>
-<section id="implementation">
-<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading"><span>#</span></a></h2>
-<p>The code to make this <em>should</em> look like</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ddphi</span> <span class="o">=</span> <span class="n">get_second_derivative</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-    <span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">ddphi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>here <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(N)</span></code> is a <em>for loop</em>. <code class="docutils literal notranslate"><span class="pre">dV</span></code> gives the derivative of your potential</p>
+<section id="numerical-implementation">
+<h3>Numerical implementation<a class="headerlink" href="#numerical-implementation" title="Permalink to this heading"><span>#</span></a></h3>
+<p>A simple version of the gradient flow algorithm starts by defining a discrete lattice with a given number of sites, <span class="math notranslate nohighlight">\(n\)</span>. We initialize other parameters such as the spatial step and the value of the update parameter <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio"/>
 <label class="sd-tab-label" data-sync-id="tabcode-Python" for="sd-tab-item-0">
+PYTHON</label><div class="sd-tab-content docutils">
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">101</span> <span class="c1">#number of points in the interval</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1">#space step</span>
+<span class="n">f</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>             <span class="c1"># Initialize field variable</span>
+<span class="n">gamma</span><span class="o">=</span><span class="mf">1.</span><span class="o">*</span><span class="nb">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">);</span>      <span class="c1"># This is the update parameter. One has to play a little bit to find optimal values. If it is too high, it won't converge, and if it is too low, it will but slowly.</span>
+<span class="n">precision</span> <span class="o">=</span> <span class="mf">0.00001</span>       <span class="c1"># This tells us when to stop the algorithm</span>
+<span class="n">max_iters</span> <span class="o">=</span> <span class="mi">100000</span>        <span class="c1"># maximum number of iterations</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-1">
+JULIA</label><div class="sd-tab-content docutils">
+<div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="n">TBU</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then, we define auxiliary functions that determine the (second) spatial derivatives of the field at a site and the derivative of the potential with respect to the field.
+Let’s call them <code class="docutils literal notranslate"><span class="pre">get_second_derivative</span></code> and <code class="docutils literal notranslate"><span class="pre">dV</span></code>.  Then, we just compute the variation of the field at each site.</p>
+<p>The code to make this <em>should</em> look like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ddphi</span> <span class="o">=</span> <span class="n">get_second_derivative</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">varphi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">ddphi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>here <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">in</span> <span class="pre">range(n)</span></code> is a <em>for loop</em>.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-Python" for="sd-tab-item-2">
 PYTHON</label><div class="sd-tab-content docutils">
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span>
     <span class="k">return</span> <span class="mi">4</span><span class="o">*</span><span class="n">phi</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">phi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio"/>
-<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-1">
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-3">
 JULIA</label><div class="sd-tab-content docutils">
 <div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="o">*</span><span class="n">phi</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">phi</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
@@ -246,23 +327,142 @@ JULIA</label><div class="sd-tab-content docutils">
 </div>
 <p>You could define this using automatic differentiation…</p>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio"/>
-<label class="sd-tab-label" data-sync-id="tabcode-Python" for="sd-tab-item-2">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-Python" for="sd-tab-item-4">
 PYTHON</label><div class="sd-tab-content docutils">
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">):</span>
     <span class="n">blah</span> <span class="n">blah</span>
 </pre></div>
 </div>
 </div>
-<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio"/>
-<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-3">
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio"/>
+<label class="sd-tab-label" data-sync-id="tabcode-Julia" for="sd-tab-item-5">
 JULIA</label><div class="sd-tab-content docutils">
 <div class="highlight-Julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="n">dV</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">'</span><span class="n">m</span><span class="w"> </span><span class="n">not</span><span class="w"> </span><span class="n">sure</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>Then, the gradient flow algorithm should look like this</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">############ GRADIENT FLOW ALGORITHM ###############</span>
+
+<span class="c1">#Set initial conditions:</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">line</span><span class="p">(</span><span class="n">xmax</span><span class="p">)</span> <span class="c1">#set linear configuration as initial condition</span>
+<span class="n">varf</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1">#initialize varf</span>
+<span class="n">printcounter</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#initialize print counter</span>
+<span class="n">printing</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="c1">#define the printing frequency in terms of number of iterations</span>
+<span class="n">iters</span> <span class="o">=</span> <span class="mi">0</span>        <span class="c1">#initialize iteration counter</span>
+
+<span class="k">while</span> <span class="n">deltaE</span> <span class="o">&gt;</span> <span class="n">precision</span> <span class="ow">and</span> <span class="n">iters</span> <span class="o">&lt;</span> <span class="n">max_iters</span><span class="p">:</span>
+    <span class="n">energy0</span><span class="o">=</span><span class="n">energy</span><span class="p">(</span><span class="n">f</span><span class="p">);</span> <span class="c1">#Store current energy value in energy0 </span>
+    
+    <span class="c1">#Calculating and storing the variation at each site:</span>
+    
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>       <span class="c1">#( We do not vary the field at the boundary points)</span>
+        <span class="n">varf</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">var_phi</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+    <span class="c1"># Implementing the variation of the field configuration:</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+        <span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">gamma</span><span class="o">*</span><span class="n">varf</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>   <span class="c1">#new field configuration</span>
+    <span class="n">energyf</span><span class="o">=</span><span class="n">energy</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>             <span class="c1">#Store energy value of the new field configuration in energyf</span>
+
+    <span class="n">deltaE</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">energyf</span> <span class="o">-</span> <span class="n">energy0</span><span class="p">)</span> <span class="c1">#Change in Energy</span>
+    <span class="n">iters</span> <span class="o">=</span> <span class="n">iters</span><span class="o">+</span><span class="mi">1</span> <span class="c1">#iteration count</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">printcounter</span> <span class="o">==</span> <span class="n">printing</span><span class="p">):</span>    
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Iteration"</span><span class="p">,</span><span class="n">iters</span><span class="p">,</span><span class="s2">"Energy value is"</span><span class="p">,</span><span class="n">energyf</span><span class="p">)</span> <span class="c1">#Print iterations</span>
+        <span class="n">printcounter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">printcounter</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"The minimum energy configuration corresponds to"</span><span class="p">,</span> <span class="n">energyf</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>In this code, we stop the gradient flow whenever one of two conditions are met. Either the difference between two consecutive values of energy is lower than a threshold value, given by the `precision’ parameter, or the maximum number of iterations is reached.</p>
 </section>
+</section>
+<section id="higher-dimensions">
+<h2>Higher dimensions<a class="headerlink" href="#higher-dimensions" title="Permalink to this heading"><span>#</span></a></h2>
+<p>Although we have seen an application of Gradient Flow to very a simple one dimensional problem, the power of this method is best employed to solve optimization problems which can not be reduced by symmetry, for example, searching for multi-soliton configurations of a nonlinear field theory in more than one dimension.</p>
+<section id="constrained-gradient-flow">
+<h3>Constrained Gradient Flow.<a class="headerlink" href="#constrained-gradient-flow" title="Permalink to this heading"><span>#</span></a></h3>
+<p>A complication that arises in multi-dimensional problems as opposed to the one dimensional case is that often the fields whose minimum energy configuration we want to find are subject to some <strong>constraints</strong> <span class="math notranslate nohighlight">\(C_\alpha (\Phi)=0\)</span>, <span class="math notranslate nohighlight">\(\alpha=1,...,m\)</span>. Therefore, the problem becomes a <em>constrained minimization</em> of the energy functional. The standard approach to procede in such cases is the method of  <strong>Lagrange multipliers</strong>, which basically consists on extending the energy functional to include the constraints:</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \tilde{E}[\Phi]=\frac 1 2\int [h_{ab}( \Phi)\partial_i\phi^a(x)\partial^i\phi^b(x) + V(\Phi)+\lambda^\alpha C_\alpha(\Phi)] d^d x,
+\]</div></div>
+<p>in which case, the variation of the modified energy density under field variations from an input configuration <span class="math notranslate nohighlight">\(\Phi^{(i)}\)</span> will be given by</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \delta \tilde{\varepsilon} [\Phi^{(i)}]=F_a[\Phi^{(i)}]\delta \phi^a+ \lambda^\alpha\frac{\partial C_\alpha}{\partial \phi^a}[\Phi^{(i)}]\delta \phi^a+\text{B. T.}.
+\]</div></div>
+<p>In particular, the (static) on-shell field configurations subject to the constraints <span class="math notranslate nohighlight">\({C_\alpha[\Phi]=0}\)</span> will satisfy the modified Euler-Lagrange equations:</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    F_a[\Phi]=- \lambda^\alpha\frac{\partial C_\alpha}{\partial\phi^a}[\Phi].
+\]</div></div>
+<p>Usually, one can use the equations of motion, the constraints, and the derivatives of the constraints to solve for the multipliers <span class="math notranslate nohighlight">\(\lambda^\alpha\)</span> in terms of the original phase space variables (in this case, the values of the fields and their time derivatives). Once the relations <span class="math notranslate nohighlight">\(\lambda^\alpha (\Phi,\partial_i \Phi)\)</span> are found, we will be interested in the first order (constrained) flow equation:</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+ \frac{d}{d\gamma}\phi_a(x,\gamma)=-F_a[\Phi(x,\gamma)]-\lambda^\alpha \frac{\partial C_\alpha}{\partial\phi ^a}[\Phi(x,\gamma)].
+\]</div></div>
+</section>
+</section>
+<section id="id1">
+<h2>Numerical implementation<a class="headerlink" href="#id1" title="Permalink to this heading"><span>#</span></a></h2>
+<p>The gradient flow relaxation method can be implemented iteratively by changing at each iteration the field configuration. In the case of three dimensions, one needs to discretize the space by defining a grid of <span class="math notranslate nohighlight">\(N_x\times N_y\times N_z\)</span> sites, with <span class="math notranslate nohighlight">\(h_{x,y,z}\)</span> the distance between grid points in the <span class="math notranslate nohighlight">\(x,y,z\)</span> direction. Thus, in the <span class="math notranslate nohighlight">\(n-th\)</span> iteration of the gradient flow, on each grid point, labeled by <span class="math notranslate nohighlight">\([i,j,k]\)</span>, (<span class="math notranslate nohighlight">\(i,j,k \in [0,N_{x,y,z}]\)</span>)  the <span class="math notranslate nohighlight">\(a-\)</span>th component of the field evolves as</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \phi_a^{(n+1)}[i,j,k]=\phi_a^{(n)}[i,j,k]-\gamma F_a[\Phi^{(n)}[i,j,k]]-\gamma \lambda^\alpha \frac{\partial C_\alpha}{\partial\phi ^a}[\Phi^{(n)}[i,j,k]].
+\]</div></div>
+<p>In any number of dimensions, for the flow to converge to a (possibly local) minimum, the update parameter <span class="math notranslate nohighlight">\(\gamma\)</span> must be small enough. However, too small values will slow down the convergence.</p>
+<p>An important difference with respect to the one dimensional problem is that the value of the topological charge cannot be obtained simply from the value of the field at the boundaries. Instead, the topological degree is obtained via an integral of a certain density over the full space. As a consequence of the space discretisation, this integral will fail to yield an integer number in general. Indeed, if the grid spacing constants <span class="math notranslate nohighlight">\(h_i\)</span> are chosen too big, it is likely that the topological charge of the field configuration <span class="math notranslate nohighlight">\(\Phi\)</span> obtained after numerical integration over all the grid points will be less than the corresponding to such configuration in the continuous limit <span class="math notranslate nohighlight">\(h_{x,y,z}\rightarrow 0\)</span>.  Both the number of grid points in each directions and the grid spacing constant will play a role in determining the deviation of the numerically obtained value for the topological charge from the integer value in the continuous limit. Such deviation can allow us to determine whether the parameters chosen for the numerical algorithm are well suited to the problem we are trying to solve.</p>
+</section>
+<section id="accelerated-gradient-descent">
+<h2>Accelerated Gradient Descent<a class="headerlink" href="#accelerated-gradient-descent" title="Permalink to this heading"><span>#</span></a></h2>
+<p>An important issue when considering the gradient flow algorithm is that of convergence. Indeed, the gradient flow method is not guaranteed to converge to a local minimum if the configuration space is not convex
+(which, in general, will not be the case for a sufficiently complex field theory), but it can converge to a metastable state (a paradigmatic example of such states in a field theory are the <em>sphalerons</em> of an <span class="math notranslate nohighlight">\(SU(2)\)</span> Yang Mills theory).
+Furthermore, the fact that the field update is proportional to the functional derivative \eqref{updateGF} may produce slow convergence times when the energy valley in field configuration space is very shallow. Indeed, when the field configuration reaches a point of energy close to the minimum, the gradient can be almost zero, making the next update step too small.</p>
+<p>These convergence problems can be alleviated by a modification of the gradient flow algorithm which introduces a ‘’memory term’’ that favours the direction of travelling from previous configurations. The regions with small gradient are then transited faster, like a heavy ball would due to its own inertia.
+The inclusion of a momentum term in the gradient descent algorithm is a standard strategy in functional optimization problems, which is usually denoted as ‘’heavy ball’’ method. The drawback of adding such a term appears when the actual minimum is met, and passed by.
+If the momentum term dominates the evolution, the system may not be able to come back to the desired local minimum, and the system may even not be able to find a local minimum ever.</p>
+<p>Using the ‘’heavy ball’’ idea, <a class="reference internal" href="#%5Bhttps://iopscience.iop.org/article/10.1088/0951-7715/10/1/002%5D(https://www.mathnet.ru/php/archive.phtml?wshow=paper&amp;jrnid=dan&amp;paperid=46009&amp;option_lang=eng)"><span class="xref myst">Nesterov</span></a>   was able to find the optimal algorithm that is based on single gradients of the energy functional.
+In such algorithm, the gradient is no longer calculated in the current position. Instead, it is done in the position that the configuration would arrive to with the momentum term alone. This gradient now favors (disfavors) the momentum direction if it was approaching to (moving away from) the minimum
+This balance leads the algorithm to convergence.
+The iterative pattern is then</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \phi_a^{(i+1)}=\phi_a^{(i)}-\Delta\phi_a^{(i+1)},
+\]</div></div>
+<p>where now the actualization of the field depends on the field but also on its previous value:</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \Delta\phi_a^{(i+1)}= p^{(i)} \Delta \phi_a^{(i)}-\gamma \tilde F_a[ \Phi^{(i)}+p^{(i)}\Delta\Phi^{(i)}], \quad \Delta \phi_a^{(0)}=0,
+\]</div></div>
+<p>where we have defined</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    \tilde F_a[\Phi]=F_a[\Phi]+\lambda^\alpha \frac{\partial C_\alpha}{\partial\phi ^a}[\Phi],
+\]</div></div>
+<p>and the momentum parameter <span class="math notranslate nohighlight">\(p^{(i)}\)</span>, given by</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[
+    p^{(i)}=\frac{v^{(i)}}{v^{(i)}+3},
+\]</div></div>
+<p>with</p>
+<div class="math-wrapper"><div class="math notranslate nohighlight">
+\[\begin{split}
+    v^{(i+1)}=
+    \begin{cases}
+    v^{(i)}+1, &amp; {\rm if} \quad E[\Phi^{(i+1)}] &lt; E[\Phi^{(i)}], \\
+     0, &amp; {\rm if }\quad E[\Phi^{(i+1)}] &gt; E[\Phi^{(i)}],
+    \end{cases}
+\end{split}\]</div></div>
+<p>and <span class="math notranslate nohighlight">\(v^{(0)}=0\)</span>.</p>
+<p>The minimization algorithm so defined is often called <strong>accelerated gradient flow</strong>. It is accelerated in the sense that the momentum parameter grows with each iteration, but it is brought back to its initial value <span class="math notranslate nohighlight">\((p=0)\)</span> when the energy minimum is passed by.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="arrested-newton-flow">
+<h1>Arrested Newton Flow<a class="headerlink" href="#arrested-newton-flow" title="Permalink to this heading"><span>#</span></a></h1>
+<p>To be continued…</p>
 <section id="read-more">
 <h2>Read more<a class="headerlink" href="#read-more" title="Permalink to this heading"><span>#</span></a></h2>
 <p>Gradient flow can also be used to generate collective coordinate space. Find out more in <a class="reference external" href="https://iopscience.iop.org/article/10.1088/0951-7715/10/1/002">this paper</a> by Manton and Merabet.</p>
@@ -320,9 +520,21 @@ JULIA</label><div class="sd-tab-content docutils">
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Gradient Flow</a><ul>
-<li><a class="reference internal" href="#theory">Theory</a></li>
-<li><a class="reference internal" href="#implementation">Implementation</a></li>
+<li><a class="reference internal" href="#">Gradient-based Optimization methods for functionals</a><ul>
+<li><a class="reference internal" href="#the-gradient-flow-relaxation-method">The gradient flow relaxation method</a><ul>
+<li><a class="reference internal" href="#example-1-dimensional-kink">Example: 1 dimensional kink</a></li>
+<li><a class="reference internal" href="#numerical-implementation">Numerical implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#higher-dimensions">Higher dimensions</a><ul>
+<li><a class="reference internal" href="#constrained-gradient-flow">Constrained Gradient Flow.</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id1">Numerical implementation</a></li>
+<li><a class="reference internal" href="#accelerated-gradient-descent">Accelerated Gradient Descent</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#arrested-newton-flow">Arrested Newton Flow</a><ul>
 <li><a class="reference internal" href="#read-more">Read more</a></li>
 </ul>
 </li>
